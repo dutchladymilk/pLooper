@@ -105,10 +105,8 @@ void augmentBreakfast() {
         cli_execute("shower ice");
 
     //big book
-    if (get_property("bankedKarma").to_int() > 2000 && available_amount($item[The Big Book of Every Skill]) > 0) 
+    if (get_property("bankedKarma").to_int() > 200 && available_amount($item[The Big Book of Every Skill]) > 0) 
         use(1, $item[The Big Book of Every Skill]);
-    
-
 }
 
 boolean useCombo() {
@@ -290,28 +288,6 @@ void postRunNoGarbo() {
 
     if (my_mp() < 250)
         cli_execute("eat magical sausage");
-    //insert asdon buffing
-    if (get_workshed() == $item[Asdon Martin keyfob]) {
-        int numTurns = 1260; //set this value manually
-        int numBuffs = numTurns/30 + 1;
-        int numPies = (numBuffs * 37)/150 + 1;
-        int numSodaBreads = (numBuffs * 37)/6 + 1;
-        if (available_amount($item[pie man was not meant to eat]) < numPies) {
-            cli_execute("buy " + numPies + " pie man was not meant to eat @3000");
-        } else {
-            cli_execute("acquire " + numPies + " pie man was not meant to eat");
-        }
-        if (available_amount($item[pie man was not meant to eat]) < numPies) {
-            cli_execute("make " + numSodaBreads + " loaf of soda bread");
-            cli_execute("asdonmartin fuel " + numSodaBreads + " loaf of soda bread");
-        } else {
-            cli_execute("asdonmartin fuel " + numPies + " pie man was not meant to eat");
-        }
-
-        while (get_fuel() >= 37) {
-            cli_execute("asdonmartin drive observantly");
-        }
-    }
 
     //shrug all AT songs that are not limited
     cli_execute('shrug stevedave');
@@ -458,6 +434,10 @@ void reentrantWrapper() {
         beforeScriptRuns();
         //kingLiberated = true leg1 before ascending. false after ascending
         if (!get_property('kingLiberated').to_boolean()) {
+			if (available_amount($item[11045]) > 0) {
+				cli_execute("closet put model train set");
+				print("Put model train set in the closet", "blue");
+			}
             cli_execute(get_property("prusias_ploop_ascendScript"));
         }
         if (get_property('kingLiberated').to_boolean() &&
@@ -465,6 +445,19 @@ void reentrantWrapper() {
         my_fullness() < fullness_limit() ||
         my_spleen_use() < spleen_limit() ||
         (my_adventures() > 0 && my_inebriety() <= inebriety_limit()))) {
+			if (get_workshed() != $item[model train set]) {
+				if (closet_amount($item[11045]) > 0) {
+					cli_execute("closet take model train set");
+					print("Took out model train set from closet", "blue");
+				}
+			}
+			if (available_amount($item[9508]) > 0) {
+			cli_execute("/use asdon");
+			print("Installed asdon", "blue");
+			}
+			cli_execute("remove hewn moon-rune spoon");
+			visit_url( "inv_use.php?whichitem=10254&pwd&doit=96&whichsign=4" ); // 4 = Platypus
+			print("moontuned", "blue");
             postRun("");
         }
         if (!get_property("breakfastCompleted").to_boolean())
