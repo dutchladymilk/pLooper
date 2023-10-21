@@ -275,9 +275,9 @@ void garboUsage(string x) {
     if (!get_property("_lodestoneUsed").to_boolean() && available_amount($item[lodestone]) > 0)
         cli_execute("use lodestone");
     if (yachtzeeAccess())
-        cli_execute("garbo candydish yachtzeechain " + x);
+        cli_execute("garbo nobarf; bountiful hunt all; garbo candydish " + x);
     else
-        cli_execute("garbo candydish " + x);
+        cli_execute("garbo nobarf yachtzeechain; bountiful hunt all; garbo candydish " + x);
 }
 
 void postRunNoGarbo() {
@@ -464,12 +464,19 @@ void reentrantWrapper() {
 			cli_execute("remove hewn moon-rune spoon");
 			visit_url( "inv_use.php?whichitem=10254&pwd&doit=96&whichsign=4" ); // 4 = Platypus
 			print("moontuned", "blue");
+			cli_execute ("ash equip($familiar[left-hand man], $item[none])");
+			print ("unequipped item from left-hand man", "blue");
+			if (available_amount($item[5553]) > 0) {
+			cli_execute("/use Can of Rain-Doh");
+			print("opened Can of Rain-Doh", "blue");
+			}
             postRun("");
         }
         if (!get_property("breakfastCompleted").to_boolean())
             augmentBreakfast();
         if (get_property('kingLiberated').to_boolean() && my_inebriety() == inebriety_limit() && my_adventures() == 0) {
             nightcap();
+			cli_execute("av-snapshot.ash");
         }
 	if (!get_property('thoth19_event_list').contains_text("end")) {
                 addBreakpoint("end");
