@@ -540,6 +540,10 @@ void reentrantHalloweenWrapper() {
         beforeScriptRuns();
         //kingLiberated = true leg1 before ascending. false after ascending
         if (!get_property('kingLiberated').to_boolean()) {
+			if (available_amount($item[11045]) > 0) {
+				cli_execute("closet put model train set");
+				print("Put model train set in the closet", "blue");
+			}
             cli_execute(get_property("prusias_ploop_ascendScript"));
         }
         if (get_property('kingLiberated').to_boolean() &&
@@ -547,6 +551,25 @@ void reentrantHalloweenWrapper() {
         my_fullness() < fullness_limit() ||
         my_spleen_use() < spleen_limit() ||
         (my_adventures() > 0 && my_inebriety() <= inebriety_limit()))) {
+			if (get_workshed() != $item[model train set]) {
+				if (closet_amount($item[11045]) > 0) {
+					cli_execute("closet take model train set");
+					print("Took out model train set from closet", "blue");
+				}
+			}
+			if (available_amount($item[9508]) > 0) {
+			cli_execute("/use asdon");
+			print("Installed asdon", "blue");
+			}
+			cli_execute("remove hewn moon-rune spoon");
+			visit_url( "inv_use.php?whichitem=10254&pwd&doit=96&whichsign=4" ); // 4 = Platypus
+			print("moontuned", "blue");
+			cli_execute ("ash equip($familiar[left-hand man], $item[none])");
+			print ("unequipped item from left-hand man", "blue");
+			if (available_amount($item[5553]) > 0) {
+			cli_execute("/use Can of Rain-Doh");
+			print("opened Can of Rain-Doh", "blue");
+			}
             postRun("nobarf");
             cli_execute("freecandy");
         }
