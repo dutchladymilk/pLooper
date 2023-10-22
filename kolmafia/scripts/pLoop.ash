@@ -495,6 +495,7 @@ void reentrantHalloweenWrapper() {
         if (!get_property("breakfastCompleted").to_boolean())
             augmentBreakfast();
         if (my_inebriety() <= inebriety_limit() && my_adventures() > 0 && my_familiar() != $familiar[Stooper]) {
+            cli_execute("CONSUME ALL VALUE 10000");
             if (get_property("prusias_ploop_garboWorkshed") == "")
                 garboUsage("nobarf ascend");
             else
@@ -522,6 +523,7 @@ void reentrantHalloweenWrapper() {
                 CS_Ascension();
             } else {
                 print("Still adventures left over after", "red");
+                set_property("valueOfAdventure", get_property("prusias_ploop_preHalloweenMPA"));
                 abort();
             }
         } else {
@@ -547,12 +549,13 @@ void reentrantHalloweenWrapper() {
         my_fullness() < fullness_limit() ||
         my_spleen_use() < spleen_limit() ||
         (my_adventures() > 0 && my_inebriety() <= inebriety_limit()))) {
+            cli_execute("CONSUME ALL VALUE 10000");
             postRun("nobarf");
             cli_execute("freecandy");
         }
         if (!get_property("breakfastCompleted").to_boolean())
             augmentBreakfast();
-        if (get_property('kingLiberated').to_boolean() && my_inebriety() == inebriety_limit() && my_adventures() == 0) {
+        if (get_property('kingLiberated').to_boolean() && my_inebriety() == inebriety_limit() && my_adventures() < 5) {
             nightcap();
             print("Consider using wineglass to burn the rest of your turns for halloween!", "red");
         }
@@ -560,10 +563,8 @@ void reentrantHalloweenWrapper() {
         addBreakpoint("halloweenEnd");
 		cli_execute("ptrack recap");
 	}
-
+    set_property("valueOfAdventure", get_property("prusias_ploop_preHalloweenMPA"));
     }
-
-    cli_execute("pUpdates check ploop");
 }
 
 void main(string input) {
