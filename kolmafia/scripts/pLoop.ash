@@ -44,6 +44,15 @@ prusias_ploop_astralPet - string - item name, exact
 prusias_ploop_astralDeli - string - item name, exact
 prusias_ploop_ascendGender - int
 prusias_ploop_yachtzeeOption = boolean
+
+prusias_ploop_pathId = int
+prusias_ploop_preAscendAcquireList = string,string...
+
+prusias_ploop_detectHalloween = boolean
+prusias_ploop_tryDmtDupe = boolean
+prusias_ploop_dmtDupeItemId = int
+prusias_ploop_postRunMoonTune = int
+prusias_ploop_optOutSmoking = boolean
 */
 
 void ploopHelper() {
@@ -55,13 +64,23 @@ void ploopHelper() {
     //smolinit
     print_html("<b>smolinit</b> - Initializes pLooper. Mandatory for the script to work");
     print_html("<b>fullday</b> - Fullday wrapper");
+    print_html("<b>clearacquirelist</b> - Empties Acquisition List so no additiional items outside README are acquired before ascension.");
+    print_html("<b>addacquirelist (item name)</b> - Adds an item to the Acquisition List. Give the item name as parameter. Will be acquired right before ascension.");
+    print("Optional Preferences", "teal");
+    print_html("<b>prusias_ploop_detectHalloween</b> - Set to true for ploop to run freecandy on halloweens. You should have downloaded and configured freecandy yourself");
+    print_html("<b>prusias_ploop_tryDmtDupe</b> - Set to <b>true</b> for ploop to try to dupe with Machine Elf. Your CS script must use exactly 5 DMT free fights and nothing more for this to work.");
+    print_html("<b>prusias_ploop_dmtDupeItemId</b> - Set to <b>item id</b> you would like to dupe");
+    print_html("<b>prusias_ploop_useAdvForPvpAtBoxingDaycare</b> - Set to <b>true</b> if you want to spend 1 adv getting pvp fights from boxing daycare.");
+    print_html("<b>prusias_ploop_postRunMoonTune</b> - Set to integer corresponding to moon id. If you have tunes available after the run, will try to tune to this moon sign.");
+    print("Disables", "teal");
+    print_html("<b>prusias_ploop_optOutSmoking</b> - Set to <b>true</b> to disable spending 1k meat on maintaining kingdom smoke supply for loop leveling");
 
     cli_execute("pUpdates check ploop");
 }
 
 void init() {
     set_property("prusias_ploop_homeClan", user_prompt("What is your home clan? The script will ensure you are in this clan before running."));
-    set_property("prusias_ploop_garboWorkshed", user_prompt("After RO, what workshed should garbo switch to? Provide an exact name of the workshed item to install. Leave blank to ignore"));
+    set_property("prusias_ploop_garboWorkshed", user_prompt("After RO (start of day), what workshed should garbo switch to? Provide an exact name of the workshed item to install. Leave blank to ignore"));
     set_property("prusias_ploop_preAscendGarden", user_prompt("What garden do you want to setup before ascending? Provide exact name of seeds. Leave blank to ignore."));
     set_property("prusias_ploop_ascensionType", user_prompt("What type of ascension are you doing? 1-Casual, 2-Normal (or Softcore), 3-Hardcore."));
     set_property("prusias_ploop_moonId", user_prompt("Provide the integer id of the moon you want to ascend into. 1-Mongoose;2-Wallaby;3-Vole;4-Platypus;5-Opossum;6-Marmot;7-Wombat;8-Blender;9-Packrat"));
@@ -69,21 +88,21 @@ void init() {
     set_property("prusias_ploop_astralPet", user_prompt("Provide the exact name of the astral pet you want to take from valhalla. https://kol.coldfront.net/thekolwiki/index.php/Pet_Heaven"));
     set_property("prusias_ploop_astralDeli", user_prompt("Provide the exact name of the astral deli item you want to take. astral hot dog dinner;astral six-pack;carton of astral energy drinks"));
     set_property("prusias_ploop_ascendGender", user_prompt("Provide the integer corresponding to the gender you wish to be! 1 for male, 2 for female."));
-    set_property("prusias_ploop_ascendScript", user_prompt("What script should be run after ascending? Type just as you would type in the CLI to run the script."));
+    set_property("prusias_ploop_ascendScript", user_prompt("What script should be run after ascending (to complete your path)? Type just as you would type in the CLI to run the script."));
     set_property("prusias_ploop_garboPostAscendWorkshed", user_prompt("After ascending and running your ascension script, what workshed should garbo switch to? Provide an exact name of the workshed item to install. Leave blank to ignore"));
     set_property("prusias_ploop_nightcapOutfit", user_prompt("Provide the exact name of the nightcap outfit you will be using."));
     set_property("prusias_ploop_pathId", "25");
 }   
 void smolInit() {
     set_property("prusias_ploop_homeClan", user_prompt("What is your home clan? The script will ensure you are in this clan before running."));
-    set_property("prusias_ploop_garboWorkshed", user_prompt("After RO (leg 1), what workshed should garbo switch to? Provide an exact name of the workshed item to install. Leave blank to ignore"));
+    set_property("prusias_ploop_garboWorkshed", user_prompt("After RO (start of day), what workshed should garbo switch to? Provide an exact name of the workshed item to install. Leave blank to ignore"));
     set_property("prusias_ploop_preAscendGarden", user_prompt("What garden do you want to setup before ascending? Provide exact name of seeds. Leave blank to ignore."));
     set_property("prusias_ploop_moonId", user_prompt("Provide the integer id of the moon you want to ascend into. 1-Mongoose;2-Wallaby;3-Vole;4-Platypus;5-Opossum;6-Marmot;7-Wombat;8-Blender;9-Packrat"));
     set_property("prusias_ploop_classId", user_prompt("Provide the exact class name you want to ascend into."));
     set_property("prusias_ploop_astralPet", user_prompt("Provide the exact name of the astral pet you want to take from valhalla. https://kol.coldfront.net/thekolwiki/index.php/Pet_Heaven"));
     set_property("prusias_ploop_astralDeli", user_prompt("Provide the exact name of the astral deli item you want to take. astral hot dog dinner;astral six-pack;carton of astral energy drinks"));
     set_property("prusias_ploop_ascendGender", user_prompt("Provide the integer corresponding to the gender you wish to be! 1 for male, 2 for female."));
-    set_property("prusias_ploop_ascendScript", user_prompt("What script should be run after ascending? Type just as you would type in the CLI to run the script."));
+    set_property("prusias_ploop_ascendScript", user_prompt("What script should be run after ascending (to complete your path)? Type just as you would type in the CLI to run the script."));
     set_property("prusias_ploop_garboPostAscendWorkshed", user_prompt("After ascending and running your ascension script (leg 2), what workshed should garbo switch to? Provide an exact name of the workshed item to install. Leave blank to ignore"));
     set_property("prusias_ploop_nightcapOutfit", user_prompt("Provide the exact name of the nightcap outfit you will be using."));
     set_property("prusias_ploop_pathId", "49");
@@ -98,6 +117,49 @@ void shrugAT() {
     cli_execute("shrug Cletus's Canticle of Celerity");
     cli_execute("shrug Jackasses' Symphony of Destruction");
     cli_execute("shrug Brawnee's Anthem of Absorption");
+}
+
+string saucegeyserAll(int round, monster opp, string text) {
+    if (have_skill($skill[Saucegeyser])) {
+        return "skill Saucegeyser";
+    } else {
+        return get_ccs_action(round);
+    }
+}
+
+void dmt_dupe() {
+    //prusias_ploop_tryDmtDupe = boolean
+    //prusias_ploop_dmtDupeItemId = int
+    if (get_property("prusias_ploop_tryDmtDupe").to_boolean() != true || get_property("prusias_ploop_dmtDupeItemId") == "") {
+        return;
+    }
+print("PLOOP_DUPE: attempting to dmt dupe");
+    item itemToDupe = get_property("prusias_ploop_dmtDupeItemId").to_int().to_item();
+    cli_execute("acquire 1 " + itemToDupe.to_string());
+
+    print(get_property("lastDMTDuplication"));
+    print(get_property("encountersUntilDMTChoice"));
+    if (get_property("lastDMTDuplication").to_int() != my_ascensions()) {
+        // We can duplicate
+        set_property('choiceAdventure1119', '4');
+        string itemChoice = "1&iid=" + get_property("prusias_ploop_dmtDupeItemId");
+        set_property('choiceAdventure1125', itemChoice);
+        cli_execute("/fam machine elf");
+        
+        while (get_property("encountersUntilDMTChoice").to_int() != 0){
+            adv1($location[The Deep Machine Tunnels], -1, "saucegeyserAll");
+        }
+        adv1($location[The Deep Machine Tunnels], -1, "");
+        set_property('choiceAdventure1119', '1');
+    } else
+    {
+        print("PLOOP_DUPE: Dupe already used");
+    }
+    if (get_property("lastDMTDuplication").to_int() != my_ascensions()) {
+        print("PLOOP_DUPE: duplicate failed somehow","red");
+    } else {
+	print("PLOOP_DUPE: duplicate success");
+	}
 }
 
 void runPvP() {
@@ -122,6 +184,23 @@ void runPvP() {
     if (item_amount(fire) > 0 && !get_property("_fireStartingKitUsed").to_boolean()) {
         set_property("choiceAdventure595", "1");
         use(1, fire);
+    }
+    if (get_property("prusias_ploop_useAdvForPvpAtBoxingDaycare").to_boolean() && my_adventures() > 0) {
+        visit_url("place.php?whichplace=town_wrong&action=townwrong_boxingdaycare");
+        run_choice(3); // go to daycare
+        if (get_property("_daycareRecruits").to_int() < 1) {
+        run_choice(1); // recruit toddlers for 100 meat
+        //run_choice(1); // recruit toddlers for 1000 meat
+        }
+        if (get_property("_daycareGymScavenges").to_int() < 1) {
+        run_choice(2); // free scavenge
+        }
+        if (hippy_stone_broken()) {
+            print("Getting fights", "teal");
+        run_choice(4); // get PvP fights (costs an adventure)
+        }
+        run_choice(5); // exit daycare
+        run_choice(4); // exit lobby
     }
 
     //uberpvp
@@ -167,6 +246,26 @@ void CS_Ascension() {
 
     if (!get_property('thoth19_event_list').contains_text("wineglassDone") && !get_property('thoth19_event_list').contains_text("preAscend"))
         addBreakpoint("preAscend");
+
+    if (get_property("getawayCampsiteUnlocked").to_boolean() && get_property("prusias_ploop_optOutSmoking").to_lower_case() != "true") {
+        //smoke tax
+        int tryNumSmokes = 10;
+        if (item_amount($item[stick of firewood]) < tryNumSmokes) {
+            cli_execute("buy " + tryNumSmokes + " stick of firewood @100");
+        }
+
+        int smoke = 0;
+        tryNumSmokes = min(tryNumSmokes,item_amount($item[stick of firewood]));
+        cli_execute("acquire " + tryNumSmokes + " stick of firewood");
+        while(item_amount($item[stick of firewood]).to_boolean() && smoke < tryNumSmokes) {
+		smoke = smoke + 1;
+            catch {
+                cli_execute("acquire campfire smoke");
+                set_property("choiceAdventure1394", "1&message=" + smoke + " Thanks Prusias for writing Ploop!");
+                use(1,$item[campfire smoke]);
+            } 
+        }
+    }
 
 
     int deli = get_property("prusias_ploop_astralDeli").to_item().to_int();
@@ -226,7 +325,10 @@ void CS_Ascension() {
         }
     }
 	//ascend
-	visit_url(`afterlife.php?pwd&action=ascend&confirmascend=1&whichsign={moonId}&gender={gender}&whichclass={classId}&whichpath={pathId}&asctype={type}&nopetok=1&noskillsok=1`,true,true);
+	visit_url(`afterlife.php?pwd&action=ascend&confirmascend=1&whichsign={moonId}&gender={gender}&whichclass={classId}&whichpath={pathId}&asctype={type}&nopetok=1&noskillsok=1&lamesignok=1&lamepatok=1`,true,true);
+    if (pathId == 49) {
+        visit_url('main.php'); while (handling_choice()) {run_choice(1);}
+    }
 
 }
 
@@ -277,12 +379,32 @@ void preCSrun() {
             cli_execute("acquire 1 borrowed time");
         if (needToAcquireItem($item[non-Euclidean angle]))
             cli_execute("acquire 1 non-Euclidean angle");
+        if (needToAcquireItem($item[abstraction: category]))
+            cli_execute("acquire 1 abstraction: category");
         if (needToAcquireItem($item[tobiko marble soda]))
             cli_execute("acquire 1 tobiko marble soda");
         if (needToAcquireItem($item[wasabi marble soda]))
             cli_execute("acquire 1 wasabi marble soda");
         if (needToAcquireItem($item[one-day ticket to Dinseylandfill]))
             cli_execute("acquire 1 one-day ticket to Dinseylandfill");
+        
+        //custom acquisition list
+        foreach x, it in get_property("prusias_ploop_preAscendAcquireList").split_string('(?<!\\\\)(, |,)') {
+            it = replace_all(create_matcher(`\\\\`, it), "");
+            item acquisitionItem = it.to_item();
+            if (acquisitionItem != $item[none] && needToAcquireItem(acquisitionItem)) {
+                print("Acquiring " + acquisitionItem.to_string());
+                cli_execute("acquire 1 " + acquisitionItem.to_string());
+            }
+        }
+    }
+
+    //potential smol pulls
+    if (get_property("prusias_ploop_pathId") == "49") {
+        if (available_amount($item[pizza of legend])  == 0)
+            cli_execute("make pizza of legend");
+        retrieve_item(1, $item[3323]);//salad fork
+        retrieve_item(1, $item[3324]);//frosty mug
     }
 
     print("Remember to spend your pvp fights", "fuchsia");
@@ -331,11 +453,26 @@ void postRunNoGarbo() {
     cli_execute("hagnk all");
     cli_execute("refresh all");
     //ensure beach access
-    retrieve_item(1,$item[bitchin' meatcar]);
+    if (!(available_amount($item[134]) > 0 || available_amount($item[4770]) > 0 || available_amount($item[4769]) > 0 || available_amount($item[6775]) > 0)) {
+        retrieve_item(1,$item[bitchin' meatcar]);
+    }
     augmentBreakfast();
 
-    if (my_mp() < 250 && get_property("prusias_ploop_pathId").to_int() != 49)
+    if (my_mp() < 250 && item_amount($item[10058]) > 0 && get_property("prusias_ploop_pathId").to_int() != 49)
         cli_execute("eat magical sausage");
+    dmt_dupe();
+    //rain-doh
+    if (item_amount($item[can of Rain-Doh]) > 0) {
+        cli_execute("use can of Rain-Doh");
+    }
+    if (have_familiar($familiar[Left-Hand Man])) {
+        familiar currFam = my_familiar();
+        use_familiar($familiar[Left-Hand Man]);
+        equip($slot[familiar],$item[none]);
+        use_familiar(currFam);
+    }
+    
+
     //insert asdon buffing
     if (get_workshed() == $item[Asdon Martin keyfob (on ring)]) {
         int numTurns = 1260; //set this value manually
@@ -436,12 +573,14 @@ void nightcap() {
         if (have_familiar($familiar[Left-Hand Man])) {
             use_familiar($familiar[Left-Hand Man]);
             equip( $slot[familiar], $item[none]);
-            if (available_amount($item[8437]) > 0) //green
+            if (item_amount($item[8437]) > 0) //green
                 equip( $slot[familiar], $item[8437]);
-            if (available_amount($item[8435]) > 0) //red
+            if (item_amount($item[8435]) > 0) //red
                 equip( $slot[familiar], $item[8435]);
-            if (available_amount($item[8436]) > 0) //blue
+            if (item_amount($item[8436]) > 0) //blue
                 equip( $slot[familiar], $item[8436]);
+        } else if (item_amount($item[solid shifting time weirdness]) > 0) {
+            equip($slot[familiar], $item[solid shifting time weirdness]);
         }
         print("Nightcap was overdrunk when it shouldn't have been");
         abort();
@@ -449,12 +588,14 @@ void nightcap() {
     if (have_familiar($familiar[Left-Hand Man])) {
         use_familiar($familiar[Left-Hand Man]);
         equip( $slot[familiar], $item[none]);
-        if (available_amount($item[8437]) > 0) //green
+        if (item_amount($item[8437]) > 0) //green
             equip( $slot[familiar], $item[8437]);
-        if (available_amount($item[8435]) > 0) //red
+        if (item_amount($item[8435]) > 0) //red
             equip( $slot[familiar], $item[8435]);
-        if (available_amount($item[8436]) > 0) //blue
+        if (item_amount($item[8436]) > 0) //blue
             equip( $slot[familiar], $item[8436]);
+    } else if (item_amount($item[solid shifting time weirdness]) > 0) {
+        equip($slot[familiar], $item[solid shifting time weirdness]);
     }
     
     
@@ -523,17 +664,39 @@ void reentrantWrapper() {
 				print("Put model train set in the closet", "blue");
             cli_execute(get_property("prusias_ploop_ascendScript"));
         }
-        if (get_property("prusias_ploop_pathId") == "49" && (get_property("questL13Final") == "step12" || get_property("questL13Final") == "step13" || get_property("questL13Final") == "finished")) {
+        if (!get_property('kingLiberated').to_boolean() && get_property("prusias_ploop_pathId") == "49" && (get_property("questL13Final") == "step12" || get_property("questL13Final") == "step13" || get_property("questL13Final") == "finished")) {
             //still king not liberated
             if (available_amount($item[10058]) > 0) {
-                cli_execute("make * magical sausage");
-                cli_execute("eat * magical sausage");
+                int numToSauge = min(23,item_amount($item[magical sausage casing]));
+                cli_execute("make " + numToSauge + " magical sausage");
+                cli_execute("eat " + numToSauge + " magical sausage");
             }  
-            if (available_amount($item[10929]) > 0) {
-                print("sweatpants here");
+            if (available_amount($item[10929]) > 0 && available_amount($item[astral pilsner]) >= 5) {
+                cli_execute("cast ode to booze");
+                cli_execute("drink astral pilsner");
             }
             if (!get_property('kingLiberated').to_boolean()) {
                 visit_url("place.php?whichplace=nstower&action=ns_11_prism");
+            }
+            cli_execute("hagnk all");
+            cli_execute("refresh all");
+            if (available_amount($item[10929]) > 0 && my_inebriety() > inebriety_limit()) {
+                while (get_property("_sweatOutSomeBoozeUsed").to_int() < 3) {
+                    equip($item[designer sweatpants]);
+                    use_skill(1, $skill[Sweat Out Some Booze]);
+                }
+                cli_execute("use cuppa Sobrie tea");
+                cli_execute("use synthetic dog hair pill");
+            }
+            //steel liver
+            cli_execute("ploopgoals goal organ");
+        }
+        if (!get_property('moonTuned').to_boolean() && get_property("prusias_ploop_postRunMoonTune") != "") {
+            //tune moon maybe
+            cli_execute('unequip hewn moon-rune spoon');
+            if (item_amount($item[hewn moon-rune spoon]) > 0) {
+                int postrunTuneMoon =  get_property("prusias_ploop_postRunMoonTune").to_int();
+                visit_url('inv_use.php?whichitem=10254&doit=96&whichsign='+postrunTuneMoon);
             }
         }
         if (get_property('kingLiberated').to_boolean() &&
@@ -574,6 +737,7 @@ void reentrantWrapper() {
         }
 
     }
+    print("Plooping Complete!", "teal");
 
     cli_execute("pUpdates check ploop");
 }
@@ -680,8 +844,28 @@ void reentrantHalloweenWrapper() {
     }
 }
 
+void clearAcquisitionList() {
+    set_property("prusias_ploop_preAscendAcquireList","");
+    print("Acquisition List emptied. No additional items outside those specified in README will be acquired before ascension.");
+}
+
+void addAcquisitionListItem(string itemToAdd) {
+    item it = itemToAdd.to_item();
+    if (it == $item[none]) {
+        print("Not a valid item. Double check spelling", "red");
+    } else {
+        string itemName = it.to_string();
+        itemName = replace_all(create_matcher(",",itemName),"\\\\,");
+        if (get_property("prusias_ploop_preAscendAcquireList") == "") {
+            set_property("prusias_ploop_preAscendAcquireList", itemName);
+        } else {
+            set_property("prusias_ploop_preAscendAcquireList", get_property("prusias_ploop_preAscendAcquireList") + ", " + itemName);
+        }
+    }
+}
+
 void main(string input) {
-    string [int] commands = input.split_string("\\s+");
+    string [int] commands = input.to_lower_case().split_string("\\s+");
     for(int i = 0; i < commands.count(); ++i){
         switch(commands[i]){
             case "fullday":
@@ -707,6 +891,23 @@ void main(string input) {
                 return;
             case "smolinit":
                 smolInit();
+                return;
+            case "clearacquirelist":
+                clearAcquisitionList();
+                return;
+            case "addacquirelist":
+                if(i + 1 < commands.count())
+                {
+                    i = i+1;
+                    string blacklistInput = "";
+                    while (i < commands.count()) {
+                        blacklistInput += commands[i];
+                        i++;
+                    }
+                    addAcquisitionListItem(blacklistInput);
+                } else {
+                    print("Please provide an item name as an argument.", "red");
+                }
                 return;
             default:
                 ploopHelper();

@@ -24,11 +24,14 @@ ploop help
 - uses lodestone for garbo
 - asdon fuels if you own asdon
 - uses burning cape for RO if in price threshold
+- Puts lavaco lamp on lefthand man or tries to equip solid shifting time weirdness at nightcap
 
 ## PreRun prep
+If you want ploop to acquire an item not on this list, run ploop help to see how to add an item to its acquisition list!
 - acquires every legendary CBB pizza if in price range
 - acquires borrowed time
 - acquires non-Euclidean angle
+- acquires abstraction: Category
 - acquires tobiko marble soda
 - acquires wasabi marble soda
 - acquires one-day ticket to Dinseylandfill
